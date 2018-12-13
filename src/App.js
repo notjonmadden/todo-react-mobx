@@ -1,27 +1,28 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import TodoList from './components/TodoList';
+import { observer } from 'mobx-react';
+import Entry from './components/Entry';
+import Todo from './models/todo';
+import { action } from 'mobx';
 
-class App extends Component {
+@observer
+class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        <Entry onSubmit={t => this.addTodo(t)}/>
+        <TodoList 
+          store={this.props.store} 
+          onTodoBeginEdit={t => this.props.store.editing = t.id}
+          onTodoEndEdit={t => this.props.store.editing = null} />
+        <p>{this.props.store.completeCount} / {this.props.store.todos.length} done!</p>
       </div>
     );
+  }
+
+  @action addTodo(text) {
+    this.props.store.todos.push(new Todo(text));
   }
 }
 
